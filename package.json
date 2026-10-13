@@ -1,11 +1,11 @@
 {
-  "name": "vite-boilerplate",
+  "name": "bartosz-janicki-portfolio",
   "private": true,
-  "version": "0.0.0",
+  "version": "0.1.0",
   "type": "module",
   "license": "proprietary",
   "main": "index.js",
-  "author": "generacja-innowacja",
+  "author": "bartosz-janicki",
   "scripts": {
     "dev": "vite",
     "build": "npx react-router build",
