@@ -4,9 +4,10 @@ export const MOBILE_BREAKPOINT = 768;
 
 export const NAVBAR_ROUTES: NavbarRoute[] = [
   {
-    path: "/about",
+    path: "/",
     label: "ABOUT",
     isCTA: false,
+    scrollTo: "about-me",
   },
   {
     path: "/blog",

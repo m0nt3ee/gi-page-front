@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import Button from "../../shared/Button/Button";
 import { MOBILE_BREAKPOINT, NAVBAR_ROUTES } from "./Navbar.constants.ts";
+import type { NavbarRoute } from "./Navbar.types.ts";
 
 const Navbar = () => {
   const navigate = useNavigate();
@@ -23,8 +24,21 @@ const Navbar = () => {
     };
   }, []);
 
-  const handleNavigate = (path: string) => {
-    navigate(path);
+  const handleNavigate = (route: NavbarRoute) => {
+    if (route.scrollTo) {
+      if (window.location.pathname !== "/") {
+        navigate("/");
+        setTimeout(() => {
+          const element = document.getElementById(route.scrollTo as string);
+          element?.scrollIntoView({ behavior: "smooth" });
+        }, 100);
+      } else {
+        const element = document.getElementById(route.scrollTo);
+        element?.scrollIntoView({ behavior: "smooth" });
+      }
+    } else {
+      navigate(route.path);
+    }
     setIsDrawerOpen(false);
   };
 
@@ -34,7 +48,7 @@ const Navbar = () => {
 
   return (
     <nav className="flex flex-row justify-between p-3 fixed w-full z-50 bg-neutral-900 backdrop-blur-sm">
-      <Button onClick={() => handleNavigate("/")}>
+      <Button onClick={() => navigate("/")}>
         BARTOSZ <span className="text-teal-300">JANICKI</span>
       </Button>
 
@@ -43,7 +57,7 @@ const Navbar = () => {
           {NAVBAR_ROUTES.map((route) => (
             <Button
               key={route.path}
-              onClick={() => handleNavigate(route.path)}
+              onClick={() => handleNavigate(route)}
               isCTA={route.isCTA}
             >
               {route.label}
@@ -61,7 +75,7 @@ const Navbar = () => {
               {NAVBAR_ROUTES.map((route) => (
                 <Button
                   key={route.path}
-                  onClick={() => handleNavigate(route.path)}
+                  onClick={() => handleNavigate(route)}
                   isCTA={route.isCTA}
                   className="w-36 my-2 h-12"
                 >

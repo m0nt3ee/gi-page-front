@@ -1,4 +1,10 @@
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import {
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+  act,
+} from "@testing-library/react";
 import { BrowserRouter } from "react-router";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import Navbar from "./Navbar";
@@ -72,13 +78,27 @@ describe("<Navbar />", () => {
     });
 
     describe("when clicking a navigation link", () => {
-      it("then navigates to the correct route", () => {
+      it("then scrolls to the section for routes with scrollTo", () => {
+        const mockElement = document.createElement("div");
+        mockElement.id = "about-me";
+        mockElement.scrollIntoView = vi.fn();
+        document.body.appendChild(mockElement);
+
+        Object.defineProperty(window, "location", {
+          value: { pathname: "/" },
+          writable: true,
+        });
+
         renderNavbar();
 
         const aboutButton = screen.getByText("ABOUT");
         fireEvent.click(aboutButton);
 
-        expect(mockNavigate).toHaveBeenCalledWith("/about");
+        expect(mockElement.scrollIntoView).toHaveBeenCalledWith({
+          behavior: "smooth",
+        });
+
+        document.body.removeChild(mockElement);
       });
     });
 
@@ -199,7 +219,10 @@ describe("<Navbar />", () => {
         expect(screen.getByText("ABOUT")).toBeInTheDocument();
 
         window.innerWidth = MOBILE_BREAKPOINT - 1;
-        window.dispatchEvent(new Event("resize"));
+
+        await act(async () => {
+          window.dispatchEvent(new Event("resize"));
+        });
 
         await waitFor(() => {
           const aboutElements = screen.queryAllByText("ABOUT");
@@ -214,7 +237,10 @@ describe("<Navbar />", () => {
         renderNavbar();
 
         window.innerWidth = 1024;
-        window.dispatchEvent(new Event("resize"));
+
+        await act(async () => {
+          window.dispatchEvent(new Event("resize"));
+        });
 
         await waitFor(() => {
           expect(screen.getByText("ABOUT")).toBeInTheDocument();
@@ -237,6 +263,72 @@ describe("<Navbar />", () => {
         );
 
         removeEventListenerSpy.mockRestore();
+      });
+    });
+  });
+
+  describe("Given a route with scrollTo property", () => {
+    beforeEach(() => {
+      window.innerWidth = 1024;
+      window.dispatchEvent(new Event("resize"));
+    });
+
+    describe("when clicking ABOUT link on home page", () => {
+      it("then scrolls to the about-me section", async () => {
+        const mockElement = document.createElement("div");
+        mockElement.id = "about-me";
+        mockElement.scrollIntoView = vi.fn();
+        document.body.appendChild(mockElement);
+
+        Object.defineProperty(window, "location", {
+          value: { pathname: "/" },
+          writable: true,
+        });
+
+        renderNavbar();
+
+        const aboutButton = screen.getByText("ABOUT");
+        fireEvent.click(aboutButton);
+
+        await waitFor(() => {
+          expect(mockElement.scrollIntoView).toHaveBeenCalledWith({
+            behavior: "smooth",
+          });
+        });
+
+        document.body.removeChild(mockElement);
+      });
+    });
+
+    describe("when clicking ABOUT link from another page", () => {
+      it("then navigates to home and scrolls to section", async () => {
+        vi.useFakeTimers();
+
+        const mockElement = document.createElement("div");
+        mockElement.id = "about-me";
+        mockElement.scrollIntoView = vi.fn();
+        document.body.appendChild(mockElement);
+
+        Object.defineProperty(window, "location", {
+          value: { pathname: "/blog" },
+          writable: true,
+        });
+
+        renderNavbar();
+
+        const aboutButton = screen.getByText("ABOUT");
+        fireEvent.click(aboutButton);
+
+        expect(mockNavigate).toHaveBeenCalledWith("/");
+
+        await vi.advanceTimersByTimeAsync(100);
+
+        expect(mockElement.scrollIntoView).toHaveBeenCalledWith({
+          behavior: "smooth",
+        });
+
+        document.body.removeChild(mockElement);
+        vi.useRealTimers();
       });
     });
   });

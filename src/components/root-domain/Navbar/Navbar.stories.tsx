@@ -108,20 +108,13 @@ export const LongScrollPage: Story = {
     (Story) => (
       <div>
         <Story />
-        <div
-          style={{
-            padding: "100px 20px",
-            height: "200vh",
-            background: "linear-gradient(180deg, #262626 0%, #0a0a0a 100%)",
-            color: "white",
-          }}
-        >
+        <div className="p-24 px-5 h-[200vh] bg-gradient-to-b from-neutral-700 to-neutral-950 text-white">
           <h1>Scroll Down</h1>
           <p>The navbar remains fixed at the top of the viewport.</p>
-          <div style={{ marginTop: "50vh" }}>
+          <div className="mt-[50vh]">
             <h2>Middle of page</h2>
           </div>
-          <div style={{ marginTop: "50vh" }}>
+          <div className="mt-[50vh]">
             <h2>Bottom of page</h2>
           </div>
         </div>
