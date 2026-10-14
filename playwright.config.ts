@@ -32,6 +32,9 @@ export default defineConfig({
     trace: "on-first-retry",
   },
 
+  /* Ignore favicon 404 errors in console */
+  ignoreHTTPSErrors: true,
+
   /* Configure projects for major browsers */
   projects: [
     {

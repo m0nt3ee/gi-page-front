@@ -28,7 +28,7 @@ test.describe("Portfolio Homepage", () => {
       page,
     }) => {
       const scrollButton = page.getByRole("button", { name: /scroll down/i });
-      await scrollButton.click();
+      await scrollButton.click({ force: true });
 
       await page.waitForTimeout(1000);
 
