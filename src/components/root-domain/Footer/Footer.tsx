@@ -28,7 +28,6 @@ const Footer = ({ email = DEFAULT_EMAIL }: FooterProps) => {
       data-testid={FOOTER_TEST_ID}
     >
       <div className="flex flex-col md:flex-row justify-between items-center gap-6">
-        {/* Left: Email */}
         <div className="text-neutral-400 font-(family-name:--font-family-jetbrains) text-sm order-2 md:order-1">
           <a
             href={`mailto:${email}`}
@@ -38,7 +37,6 @@ const Footer = ({ email = DEFAULT_EMAIL }: FooterProps) => {
           </a>
         </div>
 
-        {/* Center: Social Links */}
         <div
           className="flex gap-4 order-1 md:order-2"
           data-testid={SOCIAL_LINKS_TEST_ID}
@@ -58,7 +56,6 @@ const Footer = ({ email = DEFAULT_EMAIL }: FooterProps) => {
           ))}
         </div>
 
-        {/* Right: Back to Top */}
         <div className="order-3">
           <Button onClick={handleBackToTop} className="h-10 px-4">
             <span

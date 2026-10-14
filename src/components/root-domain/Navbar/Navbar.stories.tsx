@@ -138,10 +138,8 @@ export const InteractionTest: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    // Try to find navigation buttons - they may be in drawer or inline depending on actual window size
     const allButtons = canvas.getAllByRole("button");
 
-    // Click the first non-logo button if it exists
     if (allButtons.length > 1) {
       await userEvent.click(allButtons[1]);
       await expect(allButtons[1]).toBeInTheDocument();
@@ -167,14 +165,11 @@ export const MobileInteractionTest: Story = {
     const buttons = canvas.getAllByRole("button");
     const hamburgerButton = buttons[buttons.length - 1];
 
-    // Open drawer
     await userEvent.click(hamburgerButton);
 
-    // Verify more buttons are now visible
     const buttonsAfterOpen = canvas.getAllByRole("button");
     await expect(buttonsAfterOpen.length).toBeGreaterThan(buttons.length);
 
-    // Close drawer
     await userEvent.click(hamburgerButton);
   },
 };

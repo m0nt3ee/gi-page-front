@@ -108,18 +108,14 @@ export const InteractionTest: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    // Check email link exists
     const emailLink = canvas.getByText(/bartekj312@gmail.com/i);
     await expect(emailLink).toBeInTheDocument();
 
-    // Check back to top button
     const backToTopButton = canvas.getByText(/Back to Top/i);
     await expect(backToTopButton).toBeInTheDocument();
 
-    // Click back to top
     await userEvent.click(backToTopButton);
 
-    // Check all social buttons exist
     const buttons = canvas.getAllByRole("button");
     await expect(buttons.length).toBeGreaterThan(1);
   },
