@@ -1,9 +1,9 @@
 import {
+  act,
   fireEvent,
   render,
   screen,
   waitFor,
-  act,
 } from "@testing-library/react";
 import { BrowserRouter } from "react-router";
 import { beforeEach, describe, expect, it, vi } from "vitest";

@@ -1,7 +1,7 @@
-import Button from "@/components/shared/Button/Button";
-import Footer from "@/components/root-domain/Footer/Footer";
 import { faArrowDown } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import Footer from "@/components/root-domain/Footer/Footer";
+import Button from "@/components/shared/Button/Button";
 
 const Index = () => {
   const handleScrollDown = () => {

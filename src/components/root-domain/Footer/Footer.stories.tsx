@@ -24,7 +24,8 @@ export const Default: Story = {
   parameters: {
     docs: {
       description: {
-        story: "Default footer with email, social links, and back to top button",
+        story:
+          "Default footer with email, social links, and back to top button",
       },
     },
   },
