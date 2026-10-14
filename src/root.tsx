@@ -1,4 +1,5 @@
 import { Outlet, Scripts } from "react-router";
+import Navbar from "./components/root-domain/Navbar/Navbar";
 
 import "./index.css";
 
@@ -8,7 +9,8 @@ export default function App() {
       <head>
         <title>Bartosz Janicki</title>
       </head>
-      <body>
+      <body className="bg-neutral-900">
+        <Navbar />
         <Outlet />
         <Scripts />
       </body>
