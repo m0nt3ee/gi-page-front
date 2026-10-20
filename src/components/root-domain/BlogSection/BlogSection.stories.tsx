@@ -67,7 +67,8 @@ export const Default: Story = {
   parameters: {
     docs: {
       description: {
-        story: "Default blog section with a list of articles displayed in a grid",
+        story:
+          "Default blog section with a list of articles displayed in a grid",
       },
     },
   },

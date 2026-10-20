@@ -1,7 +1,7 @@
 import { apiClient } from "../client";
 import {
-  articlesResponseSchema,
   type Article,
+  articlesResponseSchema,
 } from "../schemas/article.schema";
 
 export const fetchArticles = async (): Promise<Article[]> => {

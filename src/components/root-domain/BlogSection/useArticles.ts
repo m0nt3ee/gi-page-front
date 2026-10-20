@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { fetchArticles } from "../../../services/api";
 import type { Article } from "../../../services/api";
+import { fetchArticles } from "../../../services/api";
 
 export const useArticles = () => {
   const [articles, setArticles] = useState<Article[]>([]);

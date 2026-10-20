@@ -59,7 +59,8 @@ export const LongTitle: Story = {
   parameters: {
     docs: {
       description: {
-        story: "Article card with a very long title that wraps to multiple lines",
+        story:
+          "Article card with a very long title that wraps to multiple lines",
       },
     },
   },
