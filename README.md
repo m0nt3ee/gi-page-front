@@ -76,6 +76,20 @@ This app uses Node.js and Yarn package manager. In order to set up project, foll
    yarn install
    ```
 
+## Configuration
+
+### Environment Variables
+
+The project uses environment variables for configuration. Copy `.env.dist` to `.env` and adjust values as needed:
+
+```bash
+cp .env.dist .env
+```
+
+Available variables:
+
+- `VITE_API_BASE_URL` - Base URL for the API (default: `http://localhost:3000`)
+
 ## Running the project
 
 To start the development server:
@@ -85,6 +99,8 @@ yarn dev
 ```
 
 Open [http://localhost:5173](http://localhost:5173) with your browser to see the result.
+
+**Note:** The blog page requires the backend API to be running on the configured `VITE_API_BASE_URL` to fetch articles.
 
 ## Available scripts
 
