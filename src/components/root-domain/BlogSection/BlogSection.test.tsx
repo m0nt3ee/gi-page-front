@@ -230,7 +230,7 @@ describe("<BlogSection />", () => {
         const heading = screen.getByRole("heading", { level: 2 });
 
         expect(heading).toBeInTheDocument();
-        expect(heading).toHaveTextContent("Articles");
+        expect(heading).toHaveTextContent("ARTICLES");
       });
 
       it("then has responsive grid classes for articles", () => {

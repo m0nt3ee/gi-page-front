@@ -1,5 +1,4 @@
 import { describe, expect, it } from "vitest";
-import { z } from "zod";
 import { articleSchema, articlesResponseSchema } from "./article.schema";
 
 describe("article.schema", () => {
@@ -129,37 +128,39 @@ describe("article.schema", () => {
   describe("Given articlesResponseSchema", () => {
     describe("when validating valid articles array", () => {
       it("then parses successfully", () => {
-        const validArticles = [
-          {
-            id: "123e4567-e89b-12d3-a456-426614174001",
-            title: "Article 1",
-            content: "Content 1",
-            createdAt: "2024-01-15T10:30:00.000Z",
-            updatedAt: "2024-01-15T10:30:00.000Z",
-          },
-          {
-            id: "123e4567-e89b-12d3-a456-426614174002",
-            title: "Article 2",
-            content: "Content 2",
-            createdAt: "2024-01-14T09:00:00.000Z",
-            updatedAt: "2024-01-14T09:00:00.000Z",
-          },
-        ];
+        const validResponse = {
+          articles: [
+            {
+              id: "123e4567-e89b-12d3-a456-426614174001",
+              title: "Article 1",
+              content: "Content 1",
+              createdAt: "2024-01-15T10:30:00.000Z",
+              updatedAt: "2024-01-15T10:30:00.000Z",
+            },
+            {
+              id: "123e4567-e89b-12d3-a456-426614174002",
+              title: "Article 2",
+              content: "Content 2",
+              createdAt: "2024-01-14T09:00:00.000Z",
+              updatedAt: "2024-01-14T09:00:00.000Z",
+            },
+          ],
+        };
 
-        const result = articlesResponseSchema.safeParse(validArticles);
+        const result = articlesResponseSchema.safeParse(validResponse);
 
         expect(result.success).toBe(true);
         if (result.success) {
-          expect(result.data).toHaveLength(2);
+          expect(result.data.articles).toHaveLength(2);
         }
       });
 
       it("then accepts empty array", () => {
-        const result = articlesResponseSchema.safeParse([]);
+        const result = articlesResponseSchema.safeParse({ articles: [] });
 
         expect(result.success).toBe(true);
         if (result.success) {
-          expect(result.data).toEqual([]);
+          expect(result.data.articles).toEqual([]);
         }
       });
     });
@@ -172,24 +173,26 @@ describe("article.schema", () => {
       });
 
       it("then fails if any article is invalid", () => {
-        const invalidArticles = [
-          {
-            id: "123e4567-e89b-12d3-a456-426614174001",
-            title: "Article 1",
-            content: "Content 1",
-            createdAt: "2024-01-15T10:30:00.000Z",
-            updatedAt: "2024-01-15T10:30:00.000Z",
-          },
-          {
-            id: "not-a-uuid",
-            title: "Article 2",
-            content: "Content 2",
-            createdAt: "2024-01-14T09:00:00.000Z",
-            updatedAt: "2024-01-14T09:00:00.000Z",
-          },
-        ];
+        const invalidResponse = {
+          articles: [
+            {
+              id: "123e4567-e89b-12d3-a456-426614174001",
+              title: "Article 1",
+              content: "Content 1",
+              createdAt: "2024-01-15T10:30:00.000Z",
+              updatedAt: "2024-01-15T10:30:00.000Z",
+            },
+            {
+              id: "not-a-uuid",
+              title: "Article 2",
+              content: "Content 2",
+              createdAt: "2024-01-14T09:00:00.000Z",
+              updatedAt: "2024-01-14T09:00:00.000Z",
+            },
+          ],
+        };
 
-        const result = articlesResponseSchema.safeParse(invalidArticles);
+        const result = articlesResponseSchema.safeParse(invalidResponse);
 
         expect(result.success).toBe(false);
       });

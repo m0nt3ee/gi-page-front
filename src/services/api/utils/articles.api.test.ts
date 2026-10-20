@@ -36,11 +36,13 @@ describe("articles.api", () => {
           },
         ];
 
-        vi.mocked(apiClient.get).mockResolvedValue({ data: mockArticles });
+        vi.mocked(apiClient.get).mockResolvedValue({
+          data: { articles: mockArticles },
+        });
 
         const result = await fetchArticles();
 
-        expect(apiClient.get).toHaveBeenCalledWith("/articles");
+        expect(apiClient.get).toHaveBeenCalledWith("/api/v1/articles");
         expect(result).toEqual(mockArticles);
       });
 
@@ -69,7 +71,9 @@ describe("articles.api", () => {
           },
         ];
 
-        vi.mocked(apiClient.get).mockResolvedValue({ data: mockArticles });
+        vi.mocked(apiClient.get).mockResolvedValue({
+          data: { articles: mockArticles },
+        });
 
         const result = await fetchArticles();
 
@@ -81,7 +85,7 @@ describe("articles.api", () => {
 
     describe("when API returns empty array", () => {
       it("then returns empty array", async () => {
-        vi.mocked(apiClient.get).mockResolvedValue({ data: [] });
+        vi.mocked(apiClient.get).mockResolvedValue({ data: { articles: [] } });
 
         const result = await fetchArticles();
 
@@ -100,7 +104,9 @@ describe("articles.api", () => {
           },
         ];
 
-        vi.mocked(apiClient.get).mockResolvedValue({ data: invalidData });
+        vi.mocked(apiClient.get).mockResolvedValue({
+          data: { articles: invalidData },
+        });
 
         await expect(fetchArticles()).rejects.toThrow(ZodError);
       });
@@ -116,7 +122,9 @@ describe("articles.api", () => {
           },
         ];
 
-        vi.mocked(apiClient.get).mockResolvedValue({ data: invalidData });
+        vi.mocked(apiClient.get).mockResolvedValue({
+          data: { articles: invalidData },
+        });
 
         await expect(fetchArticles()).rejects.toThrow(ZodError);
       });
@@ -132,7 +140,9 @@ describe("articles.api", () => {
           },
         ];
 
-        vi.mocked(apiClient.get).mockResolvedValue({ data: invalidData });
+        vi.mocked(apiClient.get).mockResolvedValue({
+          data: { articles: invalidData },
+        });
 
         await expect(fetchArticles()).rejects.toThrow(ZodError);
       });
