@@ -81,6 +81,41 @@ describe("<ArticleCard />", () => {
         expect(card).toHaveClass("border");
         expect(card).toHaveClass("hover:border-teal-500");
       });
+
+      it("then has cursor-pointer class", () => {
+        render(<ArticleCard article={mockArticle} />);
+
+        const card = screen.getByTestId(ARTICLE_CARD_TEST_ID);
+
+        expect(card).toHaveClass("cursor-pointer");
+      });
+    });
+
+    describe("when displaying content preview", () => {
+      it("then shows full content if under 100 characters", () => {
+        const shortContentArticle: Article = {
+          ...mockArticle,
+          content: "Short content",
+        };
+
+        render(<ArticleCard article={shortContentArticle} />);
+
+        expect(screen.getByText("Short content")).toBeInTheDocument();
+      });
+
+      it("then truncates content with ellipsis if over 100 characters", () => {
+        const longContentArticle: Article = {
+          ...mockArticle,
+          content:
+            "This is a very long content that exceeds one hundred characters and should be truncated with ellipsis at the end to prevent taking too much space in the card preview display",
+        };
+
+        render(<ArticleCard article={longContentArticle} />);
+
+        const preview = screen.getByText(/This is a very long content.../);
+        expect(preview).toBeInTheDocument();
+        expect(preview.textContent).toHaveLength(103); // 100 chars + "..."
+      });
     });
   });
 });

@@ -144,6 +144,16 @@ describe("<BlogSection />", () => {
         expect(retryButton).toHaveTextContent(RETRY_BUTTON_TEXT);
       });
 
+      it("then does not display retry button when onRetry is not provided", () => {
+        render(<BlogSection error={mockError} />);
+
+        const errorElement = screen.getByTestId(BLOG_ERROR_TEST_ID);
+        expect(errorElement).toBeInTheDocument();
+
+        const retryButton = screen.queryByTestId(BLOG_RETRY_BUTTON_TEST_ID);
+        expect(retryButton).not.toBeInTheDocument();
+      });
+
       it("then does not display articles", () => {
         render(<BlogSection error={mockError} articles={mockArticles} />);
 
