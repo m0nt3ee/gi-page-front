@@ -22,6 +22,11 @@ apiClient.interceptors.response.use(
     return response;
   },
   (error) => {
+    console.error("API Error:", {
+      message: error.message,
+      status: error.response?.status,
+      url: error.config?.url,
+    });
     return Promise.reject(error);
   },
 );
