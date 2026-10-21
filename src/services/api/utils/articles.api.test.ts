@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { ZodError } from "zod";
 import type { Article } from "../schemas/article.schema";
-import { fetchArticles } from "./articles.api";
+import { fetchArticleById, fetchArticles } from "./articles.api";
 
 vi.mock("../client", () => ({
   apiClient: {
@@ -184,6 +184,125 @@ describe("articles.api", () => {
         vi.mocked(apiClient.get).mockRejectedValue(error);
 
         await expect(fetchArticles()).rejects.toThrow();
+      });
+    });
+  });
+
+  describe("Given fetchArticleById function", () => {
+    describe("when API returns valid article", () => {
+      it("then returns parsed article", async () => {
+        const mockArticle: Article = {
+          id: "123e4567-e89b-12d3-a456-426614174001",
+          title: "Test Article",
+          content: "Full article content with multiple paragraphs.",
+          createdAt: "2024-01-15T10:30:00.000Z",
+          updatedAt: "2024-01-15T10:30:00.000Z",
+        };
+
+        vi.mocked(apiClient.get).mockResolvedValue({
+          data: mockArticle,
+        });
+
+        const result = await fetchArticleById(
+          "123e4567-e89b-12d3-a456-426614174001",
+        );
+
+        expect(apiClient.get).toHaveBeenCalledWith(
+          "/api/v1/articles/123e4567-e89b-12d3-a456-426614174001",
+        );
+        expect(result).toEqual(mockArticle);
+      });
+    });
+
+    describe("when API returns invalid data", () => {
+      it("then throws ZodError for missing fields", async () => {
+        const invalidData = {
+          id: "123e4567-e89b-12d3-a456-426614174001",
+          title: "Article without content",
+          createdAt: "2024-01-15T10:30:00.000Z",
+          updatedAt: "2024-01-15T10:30:00.000Z",
+        };
+
+        vi.mocked(apiClient.get).mockResolvedValue({
+          data: invalidData,
+        });
+
+        await expect(
+          fetchArticleById("123e4567-e89b-12d3-a456-426614174001"),
+        ).rejects.toThrow(ZodError);
+      });
+
+      it("then throws ZodError for invalid UUID", async () => {
+        const invalidData = {
+          id: "not-a-uuid",
+          title: "Invalid Article",
+          content: "Content",
+          createdAt: "2024-01-15T10:30:00.000Z",
+          updatedAt: "2024-01-15T10:30:00.000Z",
+        };
+
+        vi.mocked(apiClient.get).mockResolvedValue({
+          data: invalidData,
+        });
+
+        await expect(fetchArticleById("not-a-uuid")).rejects.toThrow(ZodError);
+      });
+
+      it("then throws ZodError for invalid date", async () => {
+        const invalidData = {
+          id: "123e4567-e89b-12d3-a456-426614174001",
+          title: "Article",
+          content: "Content",
+          createdAt: "not-a-date",
+          updatedAt: "2024-01-15T10:30:00.000Z",
+        };
+
+        vi.mocked(apiClient.get).mockResolvedValue({
+          data: invalidData,
+        });
+
+        await expect(
+          fetchArticleById("123e4567-e89b-12d3-a456-426614174001"),
+        ).rejects.toThrow(ZodError);
+      });
+    });
+
+    describe("when API call fails", () => {
+      it("then throws network error", async () => {
+        const networkError = new Error("Network error");
+        vi.mocked(apiClient.get).mockRejectedValue(networkError);
+
+        await expect(
+          fetchArticleById("123e4567-e89b-12d3-a456-426614174001"),
+        ).rejects.toThrow("Network error");
+      });
+
+      it("then throws error for 404 not found", async () => {
+        const error = {
+          response: {
+            status: 404,
+            data: "Not found",
+          },
+        };
+        vi.mocked(apiClient.get).mockRejectedValue(error);
+
+        await expect(
+          fetchArticleById("123e4567-e89b-12d3-a456-426614174001"),
+        ).rejects.toThrow();
+      });
+
+      it("then throws error for 500", async () => {
+        const error = {
+          response: {
+            status: 500,
+            data: "Internal server error",
+          },
+        };
+        vi.mocked(apiClient.get).mockRejectedValue(error);
+
+        await expect(
+          fetchArticleById("123e4567-e89b-12d3-a456-426614174001"),
+        ).rejects.toThrow();
       });
     });
   });

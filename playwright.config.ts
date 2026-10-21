@@ -78,5 +78,8 @@ export default defineConfig({
     command: "yarn dev",
     url: "http://localhost:5173",
     reuseExistingServer: !process.env.CI,
+    env: {
+      VITE_API_BASE_URL: "http://localhost:80",
+    },
   },
 });

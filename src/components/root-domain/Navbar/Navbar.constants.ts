@@ -15,11 +15,6 @@ export const NAVBAR_ROUTES: NavbarRoute[] = [
     isCTA: false,
   },
   {
-    path: "/article",
-    label: "ARTICLE",
-    isCTA: false,
-  },
-  {
     path: "/contact",
     label: "CONTACT ME",
     isCTA: true,

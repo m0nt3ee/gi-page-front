@@ -25,9 +25,6 @@ test.describe("Navbar Navigation", () => {
       ).toBeVisible();
       await expect(page.getByRole("button", { name: /^BLOG$/i })).toBeVisible();
       await expect(
-        page.getByRole("button", { name: /^ARTICLE$/i }),
-      ).toBeVisible();
-      await expect(
         page.getByRole("button", { name: /CONTACT ME/i }),
       ).toBeVisible();
     });
@@ -48,6 +45,14 @@ test.describe("Navbar Navigation", () => {
 
   test.describe("when clicking the logo", () => {
     test("then they should navigate to the homepage", async ({ page }) => {
+      await page.route("**/api/v1/articles", async (route) => {
+        await route.fulfill({
+          status: 200,
+          contentType: "application/json",
+          body: JSON.stringify({ articles: [] }),
+        });
+      });
+
       await page.goto("/blog");
 
       const homeButton = page.getByRole("button", {
@@ -106,9 +111,6 @@ test.describe("Navbar Navigation", () => {
       ).toBeVisible();
       await expect(page.getByRole("button", { name: /^BLOG$/i })).toBeVisible();
       await expect(
-        page.getByRole("button", { name: /^ARTICLE$/i }),
-      ).toBeVisible();
-      await expect(
         page.getByRole("button", { name: /CONTACT ME/i }),
       ).toBeVisible();
     });
@@ -135,23 +137,20 @@ test.describe("Navbar Navigation", () => {
     test("then they should be able to navigate to the blog page", async ({
       page,
     }) => {
+      await page.route("**/api/v1/articles", async (route) => {
+        await route.fulfill({
+          status: 200,
+          contentType: "application/json",
+          body: JSON.stringify({ articles: [] }),
+        });
+      });
+
       await page.setViewportSize({ width: 1280, height: 720 });
 
       const blogButton = page.getByRole("button", { name: /^BLOG$/i });
       await blogButton.click();
 
       await expect(page).toHaveURL("/blog");
-    });
-
-    test("then they should be able to navigate to the article page", async ({
-      page,
-    }) => {
-      await page.setViewportSize({ width: 1280, height: 720 });
-
-      const articleButton = page.getByRole("button", { name: /^ARTICLE$/i });
-      await articleButton.click();
-
-      await expect(page).toHaveURL("/article");
     });
   });
 });

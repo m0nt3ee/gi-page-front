@@ -1,4 +1,5 @@
 import { fireEvent, render, screen } from "@testing-library/react";
+import { BrowserRouter } from "react-router";
 import { describe, expect, it, vi } from "vitest";
 import type { Article } from "../../../services/api";
 import BlogSection from "./BlogSection";
@@ -33,10 +34,14 @@ describe("<BlogSection />", () => {
     },
   ];
 
+  const renderWithRouter = (component: React.ReactElement) => {
+    return render(<BrowserRouter>{component}</BrowserRouter>);
+  };
+
   describe("Given a BlogSection component", () => {
     describe("when articles are loading", () => {
       it("then displays loading spinner", () => {
-        render(<BlogSection isLoading={true} />);
+        renderWithRouter(<BlogSection isLoading={true} />);
 
         const loadingElement = screen.getByTestId(BLOG_LOADING_TEST_ID);
 
@@ -44,13 +49,13 @@ describe("<BlogSection />", () => {
       });
 
       it("then displays loading message", () => {
-        render(<BlogSection isLoading={true} />);
+        renderWithRouter(<BlogSection isLoading={true} />);
 
         expect(screen.getByText(LOADING_MESSAGE)).toBeInTheDocument();
       });
 
       it("then displays spinner with aria-label", () => {
-        render(<BlogSection isLoading={true} />);
+        renderWithRouter(<BlogSection isLoading={true} />);
 
         const spinner = screen.getByLabelText("Loading spinner");
 
@@ -58,7 +63,9 @@ describe("<BlogSection />", () => {
       });
 
       it("then does not display articles", () => {
-        render(<BlogSection isLoading={true} articles={mockArticles} />);
+        renderWithRouter(
+          <BlogSection isLoading={true} articles={mockArticles} />,
+        );
 
         expect(
           screen.queryByTestId(BLOG_ARTICLES_TEST_ID),
@@ -68,7 +75,7 @@ describe("<BlogSection />", () => {
 
     describe("when API answers with articles", () => {
       it("then displays all articles", () => {
-        render(<BlogSection articles={mockArticles} />);
+        renderWithRouter(<BlogSection articles={mockArticles} />);
 
         const articlesContainer = screen.getByTestId(BLOG_ARTICLES_TEST_ID);
 
@@ -78,7 +85,7 @@ describe("<BlogSection />", () => {
       });
 
       it("then renders correct number of articles", () => {
-        render(<BlogSection articles={mockArticles} />);
+        renderWithRouter(<BlogSection articles={mockArticles} />);
 
         const articlesContainer = screen.getByTestId(BLOG_ARTICLES_TEST_ID);
         const articleCards = articlesContainer.querySelectorAll("article");
@@ -87,7 +94,7 @@ describe("<BlogSection />", () => {
       });
 
       it("then does not display loading state", () => {
-        render(<BlogSection articles={mockArticles} />);
+        renderWithRouter(<BlogSection articles={mockArticles} />);
 
         expect(
           screen.queryByTestId(BLOG_LOADING_TEST_ID),
@@ -95,7 +102,7 @@ describe("<BlogSection />", () => {
       });
 
       it("then does not display error state", () => {
-        render(<BlogSection articles={mockArticles} />);
+        renderWithRouter(<BlogSection articles={mockArticles} />);
 
         expect(
           screen.queryByTestId(BLOG_ERROR_TEST_ID),
@@ -105,7 +112,7 @@ describe("<BlogSection />", () => {
 
     describe("when API answers with no articles", () => {
       it("then displays empty message", () => {
-        render(<BlogSection articles={[]} />);
+        renderWithRouter(<BlogSection articles={[]} />);
 
         const emptyElement = screen.getByTestId(BLOG_EMPTY_TEST_ID);
 
@@ -114,7 +121,7 @@ describe("<BlogSection />", () => {
       });
 
       it("then does not display articles container", () => {
-        render(<BlogSection articles={[]} />);
+        renderWithRouter(<BlogSection articles={[]} />);
 
         expect(
           screen.queryByTestId(BLOG_ARTICLES_TEST_ID),
@@ -126,7 +133,7 @@ describe("<BlogSection />", () => {
       const mockError = new Error("Network error");
 
       it("then displays error message", () => {
-        render(<BlogSection error={mockError} />);
+        renderWithRouter(<BlogSection error={mockError} />);
 
         const errorElement = screen.getByTestId(BLOG_ERROR_TEST_ID);
 
@@ -136,7 +143,7 @@ describe("<BlogSection />", () => {
 
       it("then displays retry button", () => {
         const onRetry = vi.fn();
-        render(<BlogSection error={mockError} onRetry={onRetry} />);
+        renderWithRouter(<BlogSection error={mockError} onRetry={onRetry} />);
 
         const retryButton = screen.getByTestId(BLOG_RETRY_BUTTON_TEST_ID);
 
@@ -145,7 +152,7 @@ describe("<BlogSection />", () => {
       });
 
       it("then does not display retry button when onRetry is not provided", () => {
-        render(<BlogSection error={mockError} />);
+        renderWithRouter(<BlogSection error={mockError} />);
 
         const errorElement = screen.getByTestId(BLOG_ERROR_TEST_ID);
         expect(errorElement).toBeInTheDocument();
@@ -155,7 +162,9 @@ describe("<BlogSection />", () => {
       });
 
       it("then does not display articles", () => {
-        render(<BlogSection error={mockError} articles={mockArticles} />);
+        renderWithRouter(
+          <BlogSection error={mockError} articles={mockArticles} />,
+        );
 
         expect(
           screen.queryByTestId(BLOG_ARTICLES_TEST_ID),
@@ -166,7 +175,7 @@ describe("<BlogSection />", () => {
     describe("when answer does not match schema", () => {
       it("then treats it as error state", () => {
         const schemaError = new Error("Validation failed");
-        render(<BlogSection error={schemaError} />);
+        renderWithRouter(<BlogSection error={schemaError} />);
 
         const errorElement = screen.getByTestId(BLOG_ERROR_TEST_ID);
 
@@ -176,7 +185,9 @@ describe("<BlogSection />", () => {
 
       it("then does not show partial broken answer", () => {
         const schemaError = new Error("Validation failed");
-        render(<BlogSection error={schemaError} articles={mockArticles} />);
+        renderWithRouter(
+          <BlogSection error={schemaError} articles={mockArticles} />,
+        );
 
         expect(
           screen.queryByTestId(BLOG_ARTICLES_TEST_ID),
@@ -190,7 +201,7 @@ describe("<BlogSection />", () => {
         const onRetry = vi.fn();
         const mockError = new Error("Network error");
 
-        render(<BlogSection error={mockError} onRetry={onRetry} />);
+        renderWithRouter(<BlogSection error={mockError} onRetry={onRetry} />);
 
         const retryButtonWrapper = screen.getByTestId(
           BLOG_RETRY_BUTTON_TEST_ID,
@@ -216,7 +227,7 @@ describe("<BlogSection />", () => {
           updatedAt: "2024-01-15T10:30:00.000Z",
         };
 
-        render(<BlogSection articles={[longTitleArticle]} />);
+        renderWithRouter(<BlogSection articles={[longTitleArticle]} />);
 
         const title = screen.getByText(longTitleArticle.title);
 
@@ -226,7 +237,7 @@ describe("<BlogSection />", () => {
 
     describe("when checking component structure", () => {
       it("then renders as section element", () => {
-        render(<BlogSection />);
+        renderWithRouter(<BlogSection />);
 
         const section = screen.getByTestId(BLOG_SECTION_TEST_ID);
 
@@ -235,7 +246,7 @@ describe("<BlogSection />", () => {
       });
 
       it("then has heading with correct text", () => {
-        render(<BlogSection />);
+        renderWithRouter(<BlogSection />);
 
         const heading = screen.getByRole("heading", { level: 2 });
 
@@ -244,7 +255,7 @@ describe("<BlogSection />", () => {
       });
 
       it("then has responsive grid classes for articles", () => {
-        render(<BlogSection articles={mockArticles} />);
+        renderWithRouter(<BlogSection articles={mockArticles} />);
 
         const articlesContainer = screen.getByTestId(BLOG_ARTICLES_TEST_ID);
 

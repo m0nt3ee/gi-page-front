@@ -1,4 +1,5 @@
 import { render, screen } from "@testing-library/react";
+import { BrowserRouter } from "react-router";
 import { describe, expect, it } from "vitest";
 import type { Article } from "../../../services/api";
 import ArticleCard from "./ArticleCard";
@@ -10,26 +11,30 @@ import {
 
 describe("<ArticleCard />", () => {
   const mockArticle: Article = {
-    id: "123e4567-e89b-12d3-a456-426614174000",
-    title: "Test Article Title",
-    content: "Test article content",
+    id: "123e4567-e89b-12d3-a456-426614174001",
+    title: "Test Article",
+    content: "This is a test content for the article card.",
     createdAt: "2024-01-15T10:30:00.000Z",
     updatedAt: "2024-01-15T10:30:00.000Z",
+  };
+
+  const renderWithRouter = (component: React.ReactElement) => {
+    return render(<BrowserRouter>{component}</BrowserRouter>);
   };
 
   describe("Given an ArticleCard component", () => {
     describe("when rendered with an article", () => {
       it("then displays the article title", () => {
-        render(<ArticleCard article={mockArticle} />);
+        renderWithRouter(<ArticleCard article={mockArticle} />);
 
         const title = screen.getByTestId(ARTICLE_TITLE_TEST_ID);
 
         expect(title).toBeInTheDocument();
-        expect(title).toHaveTextContent("Test Article Title");
+        expect(title).toHaveTextContent("Test Article");
       });
 
       it("then displays the formatted date", () => {
-        render(<ArticleCard article={mockArticle} />);
+        renderWithRouter(<ArticleCard article={mockArticle} />);
 
         const date = screen.getByTestId(ARTICLE_DATE_TEST_ID);
 
@@ -38,7 +43,7 @@ describe("<ArticleCard />", () => {
       });
 
       it("then has correct datetime attribute", () => {
-        render(<ArticleCard article={mockArticle} />);
+        renderWithRouter(<ArticleCard article={mockArticle} />);
 
         const date = screen.getByTestId(ARTICLE_DATE_TEST_ID);
 
@@ -46,7 +51,7 @@ describe("<ArticleCard />", () => {
       });
 
       it("then renders as an article element", () => {
-        render(<ArticleCard article={mockArticle} />);
+        renderWithRouter(<ArticleCard article={mockArticle} />);
 
         const card = screen.getByTestId(ARTICLE_CARD_TEST_ID);
 
@@ -63,7 +68,7 @@ describe("<ArticleCard />", () => {
             "This is a very long article title that should wrap properly and not cause horizontal scrolling issues in the layout",
         };
 
-        render(<ArticleCard article={longTitleArticle} />);
+        renderWithRouter(<ArticleCard article={longTitleArticle} />);
 
         const title = screen.getByTestId(ARTICLE_TITLE_TEST_ID);
 
@@ -73,7 +78,7 @@ describe("<ArticleCard />", () => {
 
     describe("when checking styling", () => {
       it("then has correct CSS classes for layout", () => {
-        render(<ArticleCard article={mockArticle} />);
+        renderWithRouter(<ArticleCard article={mockArticle} />);
 
         const card = screen.getByTestId(ARTICLE_CARD_TEST_ID);
 
@@ -83,7 +88,7 @@ describe("<ArticleCard />", () => {
       });
 
       it("then has cursor-pointer class", () => {
-        render(<ArticleCard article={mockArticle} />);
+        renderWithRouter(<ArticleCard article={mockArticle} />);
 
         const card = screen.getByTestId(ARTICLE_CARD_TEST_ID);
 
@@ -98,7 +103,7 @@ describe("<ArticleCard />", () => {
           content: "Short content",
         };
 
-        render(<ArticleCard article={shortContentArticle} />);
+        renderWithRouter(<ArticleCard article={shortContentArticle} />);
 
         expect(screen.getByText("Short content")).toBeInTheDocument();
       });
@@ -110,7 +115,7 @@ describe("<ArticleCard />", () => {
             "This is a very long content that exceeds one hundred characters and should be truncated with ellipsis at the end to prevent taking too much space in the card preview display",
         };
 
-        render(<ArticleCard article={longContentArticle} />);
+        renderWithRouter(<ArticleCard article={longContentArticle} />);
 
         const preview = screen.getByText(/This is a very long content.../);
         expect(preview).toBeInTheDocument();
