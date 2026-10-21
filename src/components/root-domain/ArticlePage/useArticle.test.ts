@@ -176,12 +176,10 @@ describe("useArticle", () => {
           result.current.retry();
         });
 
-        // Wait for loading to complete (will fail again)
         await waitFor(() => {
           expect(result.current.isLoading).toBe(false);
         });
 
-        // Verify the state was reset during the retry (new error instance)
         expect(result.current.notFound).toBe(false);
         expect(result.current.article).toBe(null);
       });
