@@ -20,7 +20,6 @@ test.describe("Article Page", () => {
   ];
 
   test.beforeEach(async ({ page }) => {
-    // Set up API mocking before each test
     await page.route("**/api/v1/articles", async (route) => {
       await route.fulfill({
         status: 200,
@@ -56,17 +55,14 @@ test.describe("Article Page", () => {
     test("navigates from blog section to article and back to blog", async ({
       page,
     }) => {
-      // Given: The blog section is loaded with articles
       await page.goto("/blog");
       await page.waitForSelector('[data-testid="blog-articles"]');
 
-      // When: User clicks on the first article
       const firstArticleCard = page
         .locator('[data-testid="article-card"]')
         .first();
       await firstArticleCard.click();
 
-      // Then: The article page loads and displays the full article
       await page.waitForURL("**/article/123e4567-e89b-12d3-a456-426614174001");
       await page.waitForSelector('[data-testid="article-page-content"]');
 
@@ -84,18 +80,15 @@ test.describe("Article Page", () => {
       );
       await expect(articleText).toContainText("improved code quality");
 
-      // And: The page is scrolled to the top
       const scrollPosition = await page.evaluate(() => window.scrollY);
       expect(scrollPosition).toBe(0);
 
-      // When: User clicks the back button
       const backButton = page.locator(
         '[data-testid="article-page-back-button"]',
       );
       const button = backButton.locator("button");
       await button.click();
 
-      // Then: User returns to the blog page
       await page.waitForURL("/blog");
       await page.waitForSelector('[data-testid="blog-articles"]');
       const articlesSection = page.locator('[data-testid="blog-articles"]');
@@ -105,7 +98,6 @@ test.describe("Article Page", () => {
     test("uses browser back button to return to blog page", async ({
       page,
     }) => {
-      // Given: Articles are loaded
       await page.route("**/api/v1/articles", async (route) => {
         await route.fulfill({
           status: 200,
@@ -125,7 +117,6 @@ test.describe("Article Page", () => {
         },
       );
 
-      // When: User navigates to home, then to article
       await page.goto("/blog");
       await page.waitForSelector('[data-testid="blog-articles"]');
 
@@ -137,10 +128,8 @@ test.describe("Article Page", () => {
       await page.waitForURL("**/article/123e4567-e89b-12d3-a456-426614174001");
       await page.waitForSelector('[data-testid="article-page-content"]');
 
-      // When: User clicks browser back button
       await page.goBack();
 
-      // Then: User returns to blog page
       await page.waitForURL("/blog");
       await page.waitForSelector('[data-testid="blog-articles"]');
     });
@@ -150,7 +139,6 @@ test.describe("Article Page", () => {
     test("shows loading indicator while article is loading", async ({
       page,
     }) => {
-      // Override the default mock with a delayed response
       await page.unroute(
         "**/api/v1/articles/123e4567-e89b-12d3-a456-426614174001",
       );
@@ -165,18 +153,14 @@ test.describe("Article Page", () => {
           });
         },
       );
-
-      // When: User navigates to article page
       await page.goto("/article/123e4567-e89b-12d3-a456-426614174001");
 
-      // Then: Loading indicator is visible
       const loadingElement = page.locator(
         '[data-testid="article-page-loading"]',
       );
       await expect(loadingElement).toBeVisible();
       await expect(loadingElement).toContainText("Loading article...");
 
-      // And: Loading spinner is present
       const spinner = page.locator('[aria-label="Loading spinner"]');
       await expect(spinner).toBeVisible();
     });
@@ -186,7 +170,6 @@ test.describe("Article Page", () => {
     test("shows not found message when article does not exist", async ({
       page,
     }) => {
-      // Given: API returns 404
       await page.route("**/api/v1/articles/non-existent-id", async (route) => {
         await route.fulfill({
           status: 404,
@@ -195,10 +178,8 @@ test.describe("Article Page", () => {
         });
       });
 
-      // When: User navigates to non-existent article
       await page.goto("/article/non-existent-id");
 
-      // Then: Not found message is displayed
       await page.waitForSelector('[data-testid="article-page-not-found"]');
       const notFoundElement = page.locator(
         '[data-testid="article-page-not-found"]',
@@ -208,7 +189,6 @@ test.describe("Article Page", () => {
         "doesn't exist or has been removed",
       );
 
-      // And: Back button is available
       const backButton = page.locator(
         '[data-testid="article-page-back-button"]',
       );
@@ -216,10 +196,8 @@ test.describe("Article Page", () => {
     });
 
     test("shows not found message for invalid UUID", async ({ page }) => {
-      // When: User navigates to article with invalid ID format
       await page.goto("/article/invalid-uuid-format");
 
-      // Then: Not found message is displayed
       await page.waitForSelector('[data-testid="article-page-not-found"]');
       const notFoundElement = page.locator(
         '[data-testid="article-page-not-found"]',
@@ -230,7 +208,6 @@ test.describe("Article Page", () => {
 
   test.describe("Error Handling", () => {
     test("shows error message when API is down", async ({ page }) => {
-      // Override mock to return 500 error
       await page.unroute(
         "**/api/v1/articles/123e4567-e89b-12d3-a456-426614174001",
       );
@@ -245,15 +222,12 @@ test.describe("Article Page", () => {
         },
       );
 
-      // When: User navigates to article
       await page.goto("/article/123e4567-e89b-12d3-a456-426614174001");
 
-      // Then: Error message is displayed
       await page.waitForSelector('[data-testid="article-page-error"]');
       const errorElement = page.locator('[data-testid="article-page-error"]');
       await expect(errorElement).toContainText("Failed to load article");
 
-      // And: Retry button is available
       const retryButton = page.locator(
         '[data-testid="article-page-retry-button"]',
       );
@@ -266,7 +240,6 @@ test.describe("Article Page", () => {
     }) => {
       let requestCount = 0;
 
-      // Override mock with conditional response
       await page.unroute(
         "**/api/v1/articles/123e4567-e89b-12d3-a456-426614174001",
       );
@@ -290,17 +263,14 @@ test.describe("Article Page", () => {
         },
       );
 
-      // When: User navigates to article and sees error
       await page.goto("/article/123e4567-e89b-12d3-a456-426614174001");
       await page.waitForSelector('[data-testid="article-page-error"]');
 
-      // And: User clicks retry button
       const retryButton = page.locator(
         '[data-testid="article-page-retry-button"]',
       );
       await retryButton.click();
 
-      // Then: Article loads successfully
       await page.waitForSelector('[data-testid="article-page-content"]');
       const articleTitle = page.locator('[data-testid="article-page-title"]');
       await expect(articleTitle).toHaveText(
@@ -313,11 +283,9 @@ test.describe("Article Page", () => {
     test("displays full article with paragraphs preserved", async ({
       page,
     }) => {
-      // When: User opens article
       await page.goto("/article/123e4567-e89b-12d3-a456-426614174001");
       await page.waitForSelector('[data-testid="article-page-content"]');
 
-      // Then: All content is visible
       const articleText = page.locator('[data-testid="article-page-text"]');
       await expect(articleText).toContainText(
         "React and TypeScript are a powerful combination",
@@ -327,7 +295,6 @@ test.describe("Article Page", () => {
         "explore the basics of setting up a React project",
       );
 
-      // And: Content is structured in paragraphs
       const paragraphs = articleText.locator("p");
       const paragraphCount = await paragraphs.count();
       expect(paragraphCount).toBeGreaterThanOrEqual(3);
@@ -336,13 +303,15 @@ test.describe("Article Page", () => {
     test("prevents XSS attacks by not executing HTML content", async ({
       page,
     }) => {
-      // Given: Article with script tags
       const articleWithScript = {
         ...mockArticles[0],
         content:
           "Normal text <script>window.xssExecuted = true;</script> more text <b>bold</b> end",
       };
 
+      await page.unroute(
+        "**/api/v1/articles/123e4567-e89b-12d3-a456-426614174001",
+      );
       await page.route(
         "**/api/v1/articles/123e4567-e89b-12d3-a456-426614174001",
         async (route) => {
@@ -354,17 +323,14 @@ test.describe("Article Page", () => {
         },
       );
 
-      // When: User opens article
       await page.goto("/article/123e4567-e89b-12d3-a456-426614174001");
       await page.waitForSelector('[data-testid="article-page-content"]');
 
-      // Then: Script is not executed
       const xssExecuted = await page.evaluate(
         () => (window as any).xssExecuted,
       );
       expect(xssExecuted).toBeUndefined();
 
-      // And: HTML tags are displayed as text
       const articleText = page.locator('[data-testid="article-page-text"]');
       await expect(articleText).toContainText("<script>");
       await expect(articleText).toContainText("<b>");
@@ -375,10 +341,8 @@ test.describe("Article Page", () => {
     test("loads article when opened directly from bookmark", async ({
       page,
     }) => {
-      // When: User navigates directly to article URL
       await page.goto("/article/123e4567-e89b-12d3-a456-426614174001");
 
-      // Then: Article loads without visiting home page first
       await page.waitForSelector('[data-testid="article-page-content"]');
       const articleTitle = page.locator('[data-testid="article-page-title"]');
       await expect(articleTitle).toHaveText(
@@ -391,7 +355,6 @@ test.describe("Article Page", () => {
     test("loads new article when navigating from one article to another", async ({
       page,
     }) => {
-      // When: User opens first article
       await page.goto("/article/123e4567-e89b-12d3-a456-426614174001");
       await page.waitForSelector('[data-testid="article-page-content"]');
 
@@ -400,11 +363,9 @@ test.describe("Article Page", () => {
         "Getting Started with React and TypeScript",
       );
 
-      // And: User navigates to second article
       await page.goto("/article/123e4567-e89b-12d3-a456-426614174002");
       await page.waitForSelector('[data-testid="article-page-content"]');
 
-      // Then: New article loads and old one is not visible
       articleTitle = page.locator('[data-testid="article-page-title"]');
       await expect(articleTitle).toHaveText(
         "Understanding State Management with Zustand",
@@ -418,15 +379,12 @@ test.describe("Article Page", () => {
       await page.goto("/article/123e4567-e89b-12d3-a456-426614174001");
       await page.waitForSelector('[data-testid="article-page-content"]');
 
-      // Check for semantic article element
       const article = page.locator("article");
       await expect(article).toBeVisible();
 
-      // Check for heading hierarchy
       const h1 = page.locator("h1");
       await expect(h1).toBeVisible();
 
-      // Check for time element with datetime attribute
       const timeElement = page.locator("time");
       await expect(timeElement).toHaveAttribute("datetime");
     });

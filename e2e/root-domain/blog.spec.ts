@@ -69,6 +69,7 @@ test.describe("Blog Page", () => {
   });
 
   test("shows loading state initially", async ({ page }) => {
+    await page.unroute("**/api/v1/articles");
     await page.route("**/api/v1/articles", async (route) => {
       await new Promise((resolve) => setTimeout(resolve, 1000));
       await route.fulfill({
@@ -86,6 +87,7 @@ test.describe("Blog Page", () => {
   });
 
   test("shows empty state when no articles", async ({ page }) => {
+    await page.unroute("**/api/v1/articles");
     await page.route("**/api/v1/articles", async (route) => {
       await route.fulfill({
         status: 200,
@@ -102,6 +104,7 @@ test.describe("Blog Page", () => {
   });
 
   test("shows error state when API fails", async ({ page }) => {
+    await page.unroute("**/api/v1/articles");
     await page.route("**/api/v1/articles", async (route) => {
       await route.fulfill({
         status: 500,
@@ -125,6 +128,7 @@ test.describe("Blog Page", () => {
   }) => {
     let requestCount = 0;
 
+    await page.unroute("**/api/v1/articles");
     await page.route("**/api/v1/articles", async (route) => {
       requestCount++;
       if (requestCount === 1) {
@@ -171,6 +175,7 @@ test.describe("Blog Page", () => {
   test("handles long article titles without horizontal scroll", async ({
     page,
   }) => {
+    await page.unroute("**/api/v1/articles");
     await page.route("**/api/v1/articles", async (route) => {
       await route.fulfill({
         status: 200,
@@ -219,6 +224,7 @@ test.describe("Blog Page", () => {
   });
 
   test("page remains functional during loading", async ({ page }) => {
+    await page.unroute("**/api/v1/articles");
     await page.route("**/api/v1/articles", async (route) => {
       await new Promise((resolve) => setTimeout(resolve, 2000));
       await route.fulfill({
