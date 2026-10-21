@@ -25,9 +25,6 @@ test.describe("Navbar Navigation", () => {
       ).toBeVisible();
       await expect(page.getByRole("button", { name: /^BLOG$/i })).toBeVisible();
       await expect(
-        page.getByRole("button", { name: /^ARTICLE$/i }),
-      ).toBeVisible();
-      await expect(
         page.getByRole("button", { name: /CONTACT ME/i }),
       ).toBeVisible();
     });
@@ -106,9 +103,6 @@ test.describe("Navbar Navigation", () => {
       ).toBeVisible();
       await expect(page.getByRole("button", { name: /^BLOG$/i })).toBeVisible();
       await expect(
-        page.getByRole("button", { name: /^ARTICLE$/i }),
-      ).toBeVisible();
-      await expect(
         page.getByRole("button", { name: /CONTACT ME/i }),
       ).toBeVisible();
     });
@@ -141,17 +135,6 @@ test.describe("Navbar Navigation", () => {
       await blogButton.click();
 
       await expect(page).toHaveURL("/blog");
-    });
-
-    test("then they should be able to navigate to the article page", async ({
-      page,
-    }) => {
-      await page.setViewportSize({ width: 1280, height: 720 });
-
-      const articleButton = page.getByRole("button", { name: /^ARTICLE$/i });
-      await articleButton.click();
-
-      await expect(page).toHaveURL("/article");
     });
   });
 });
