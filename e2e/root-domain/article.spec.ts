@@ -19,30 +19,44 @@ test.describe("Article Page", () => {
     },
   ];
 
+  test.beforeEach(async ({ page }) => {
+    // Set up API mocking before each test
+    await page.route("**/api/v1/articles", async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify({ articles: mockArticles }),
+      });
+    });
+
+    await page.route(
+      "**/api/v1/articles/123e4567-e89b-12d3-a456-426614174001",
+      async (route) => {
+        await route.fulfill({
+          status: 200,
+          contentType: "application/json",
+          body: JSON.stringify(mockArticles[0]),
+        });
+      },
+    );
+
+    await page.route(
+      "**/api/v1/articles/123e4567-e89b-12d3-a456-426614174002",
+      async (route) => {
+        await route.fulfill({
+          status: 200,
+          contentType: "application/json",
+          body: JSON.stringify(mockArticles[1]),
+        });
+      },
+    );
+  });
+
   test.describe("Happy Path: From blog to article and back", () => {
     test("navigates from blog section to article and back to blog", async ({
       page,
     }) => {
       // Given: The blog section is loaded with articles
-      await page.route("**/api/v1/articles", async (route) => {
-        await route.fulfill({
-          status: 200,
-          contentType: "application/json",
-          body: JSON.stringify({ articles: mockArticles }),
-        });
-      });
-
-      await page.route(
-        "**/api/v1/articles/123e4567-e89b-12d3-a456-426614174001",
-        async (route) => {
-          await route.fulfill({
-            status: 200,
-            contentType: "application/json",
-            body: JSON.stringify(mockArticles[0]),
-          });
-        },
-      );
-
       await page.goto("/blog");
       await page.waitForSelector('[data-testid="blog-articles"]');
 
@@ -136,7 +150,10 @@ test.describe("Article Page", () => {
     test("shows loading indicator while article is loading", async ({
       page,
     }) => {
-      // Given: API responds slowly
+      // Override the default mock with a delayed response
+      await page.unroute(
+        "**/api/v1/articles/123e4567-e89b-12d3-a456-426614174001",
+      );
       await page.route(
         "**/api/v1/articles/123e4567-e89b-12d3-a456-426614174001",
         async (route) => {
@@ -213,7 +230,10 @@ test.describe("Article Page", () => {
 
   test.describe("Error Handling", () => {
     test("shows error message when API is down", async ({ page }) => {
-      // Given: API fails with 500 error
+      // Override mock to return 500 error
+      await page.unroute(
+        "**/api/v1/articles/123e4567-e89b-12d3-a456-426614174001",
+      );
       await page.route(
         "**/api/v1/articles/123e4567-e89b-12d3-a456-426614174001",
         async (route) => {
@@ -246,7 +266,10 @@ test.describe("Article Page", () => {
     }) => {
       let requestCount = 0;
 
-      // Given: API fails first, succeeds second
+      // Override mock with conditional response
+      await page.unroute(
+        "**/api/v1/articles/123e4567-e89b-12d3-a456-426614174001",
+      );
       await page.route(
         "**/api/v1/articles/123e4567-e89b-12d3-a456-426614174001",
         async (route) => {
@@ -290,18 +313,6 @@ test.describe("Article Page", () => {
     test("displays full article with paragraphs preserved", async ({
       page,
     }) => {
-      // Given: Article with multiple paragraphs
-      await page.route(
-        "**/api/v1/articles/123e4567-e89b-12d3-a456-426614174001",
-        async (route) => {
-          await route.fulfill({
-            status: 200,
-            contentType: "application/json",
-            body: JSON.stringify(mockArticles[0]),
-          });
-        },
-      );
-
       // When: User opens article
       await page.goto("/article/123e4567-e89b-12d3-a456-426614174001");
       await page.waitForSelector('[data-testid="article-page-content"]');
@@ -364,18 +375,6 @@ test.describe("Article Page", () => {
     test("loads article when opened directly from bookmark", async ({
       page,
     }) => {
-      // Given: User opens article URL directly
-      await page.route(
-        "**/api/v1/articles/123e4567-e89b-12d3-a456-426614174001",
-        async (route) => {
-          await route.fulfill({
-            status: 200,
-            contentType: "application/json",
-            body: JSON.stringify(mockArticles[0]),
-          });
-        },
-      );
-
       // When: User navigates directly to article URL
       await page.goto("/article/123e4567-e89b-12d3-a456-426614174001");
 
@@ -392,29 +391,6 @@ test.describe("Article Page", () => {
     test("loads new article when navigating from one article to another", async ({
       page,
     }) => {
-      // Given: Two articles exist
-      await page.route(
-        "**/api/v1/articles/123e4567-e89b-12d3-a456-426614174001",
-        async (route) => {
-          await route.fulfill({
-            status: 200,
-            contentType: "application/json",
-            body: JSON.stringify(mockArticles[0]),
-          });
-        },
-      );
-
-      await page.route(
-        "**/api/v1/articles/123e4567-e89b-12d3-a456-426614174002",
-        async (route) => {
-          await route.fulfill({
-            status: 200,
-            contentType: "application/json",
-            body: JSON.stringify(mockArticles[1]),
-          });
-        },
-      );
-
       // When: User opens first article
       await page.goto("/article/123e4567-e89b-12d3-a456-426614174001");
       await page.waitForSelector('[data-testid="article-page-content"]');
@@ -439,17 +415,6 @@ test.describe("Article Page", () => {
 
   test.describe("Accessibility", () => {
     test("has correct semantic HTML structure", async ({ page }) => {
-      await page.route(
-        "**/api/v1/articles/123e4567-e89b-12d3-a456-426614174001",
-        async (route) => {
-          await route.fulfill({
-            status: 200,
-            contentType: "application/json",
-            body: JSON.stringify(mockArticles[0]),
-          });
-        },
-      );
-
       await page.goto("/article/123e4567-e89b-12d3-a456-426614174001");
       await page.waitForSelector('[data-testid="article-page-content"]');
 
