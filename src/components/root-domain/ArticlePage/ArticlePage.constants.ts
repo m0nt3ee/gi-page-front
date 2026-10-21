@@ -12,6 +12,7 @@ export const ARTICLE_PAGE_BACK_BUTTON_TEST_ID = "article-page-back-button";
 export const LOADING_MESSAGE = "Loading article...";
 export const ERROR_MESSAGE = "Failed to load article. Please try again.";
 export const NOT_FOUND_MESSAGE = "Article not found";
-export const NOT_FOUND_DESCRIPTION = "The article you're looking for doesn't exist or has been removed.";
+export const NOT_FOUND_DESCRIPTION =
+  "The article you're looking for doesn't exist or has been removed.";
 export const RETRY_BUTTON_TEXT = "Try Again";
 export const BACK_BUTTON_TEXT = "Back to Articles";

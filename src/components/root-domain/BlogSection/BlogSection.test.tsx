@@ -63,7 +63,9 @@ describe("<BlogSection />", () => {
       });
 
       it("then does not display articles", () => {
-        renderWithRouter(<BlogSection isLoading={true} articles={mockArticles} />);
+        renderWithRouter(
+          <BlogSection isLoading={true} articles={mockArticles} />,
+        );
 
         expect(
           screen.queryByTestId(BLOG_ARTICLES_TEST_ID),
@@ -160,7 +162,9 @@ describe("<BlogSection />", () => {
       });
 
       it("then does not display articles", () => {
-        renderWithRouter(<BlogSection error={mockError} articles={mockArticles} />);
+        renderWithRouter(
+          <BlogSection error={mockError} articles={mockArticles} />,
+        );
 
         expect(
           screen.queryByTestId(BLOG_ARTICLES_TEST_ID),
@@ -181,7 +185,9 @@ describe("<BlogSection />", () => {
 
       it("then does not show partial broken answer", () => {
         const schemaError = new Error("Validation failed");
-        renderWithRouter(<BlogSection error={schemaError} articles={mockArticles} />);
+        renderWithRouter(
+          <BlogSection error={schemaError} articles={mockArticles} />,
+        );
 
         expect(
           screen.queryByTestId(BLOG_ARTICLES_TEST_ID),
